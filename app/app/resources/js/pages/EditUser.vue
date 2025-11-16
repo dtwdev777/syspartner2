@@ -127,7 +127,7 @@ onMounted(() => {
 
 watch(() => formData.token, (newToken) => {
     syncLinksWithToken(newToken);
-}, { immediate: true });
+});
 
 
 // ------------------------------------
