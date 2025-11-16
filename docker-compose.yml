@@ -1,0 +1,107 @@
+
+version: '3'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    #command: sh -c ""
+      
+        
+    image: my-laravel-app
+    expose:
+      - "9000"
+    # ports:
+      
+    #   - "8000:8000"
+    #   - "5173:5173"
+   
+    container_name: my-laravel-app2
+    restart: unless-stopped
+    tty: true
+    environment:
+      SERVICE_NAME: my-laravel-app
+      SERVICE_TAGS: dev
+    working_dir: /var/www/html
+    volumes:
+      - ./app:/var/www/html
+      - ./crontab:/etc/cron.d/task
+      - ./supervisord.conf:/etc/supervisor/supervisord.conf
+    user: "1000:1000"
+
+    networks:
+      - app-network
+
+    
+
+  db:
+    image: mysql:8
+    container_name: my-laravel-mysql2
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "13306:3306"
+    environment:
+      MYSQL_DATABASE: laravel
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: password
+      SERVICE_TAGS: dev
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - app-network
+
+  # Nginx Service
+  web:
+    image: 'nginx:alpine'
+    container_name: web2
+    ports:
+      - "80:80"
+     # - "443:443"
+    volumes:
+      - ./app:/var/www/html
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/certs:/etc/nginx/certs
+    depends_on:
+      - app
+      - redis-cache
+      
+    networks:
+      - app-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin2
+    environment:
+      PMA_HOST: db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "8080:80"    #this line maps your pc port to the container port
+    depends_on:
+      - db    #this line links this container to the db container
+   
+    networks:
+      - app-network
+
+  redis-cache:
+    image: redis:latest
+    container_name:  redis2
+    restart: always
+    ports:
+      - "6379:6379"
+    command: redis-server --save 20 1 --loglevel warning --requirepass demo777
+    volumes:
+      - ./cache:/data
+    networks:
+      - app-network
+    
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  dbdata:
+    driver: local

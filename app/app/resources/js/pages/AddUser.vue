@@ -1,0 +1,348 @@
+<script setup>
+import { ref, onMounted, computed } from 'vue';
+
+import { router, useForm } from '@inertiajs/vue3';
+ // ------------------------------------
+// 1. Состояние формы
+// ------------------------------------
+
+
+// ------------------------------------
+// 1. Состояние формы
+// ------------------------------------
+const formData = useForm({
+  name: '',         
+  token: '',        // Здесь будет токен
+  isActive: true,   
+  dateRangeType: 'День', // Для режима интервала
+  customDate: '', 
+  
+  dateRangeType: 'День',
+  limitCount: 100, // НОВОЕ: Тип интервала по умолчанию  
+  links: [''],     
+});
+
+const formSubmitted = ref(false);
+const useDatePicker = ref(false); // ⭐️ НОВОЕ: Переключатель режима (false = Интервал)
+
+const dateRangeOptions = ref(['День', 'Неделя', 'Месяц']);
+
+const validationErrors = ref({});
+
+const rules = {
+  required: (value) => !!value || 'Это поле обязательно для заполнения.',
+  integer: (value) => Number.isInteger(Number(value)) || 'Должно быть целое число.',
+  positive: (value) => value >= 0 || 'Не может быть отрицательным.',
+  // Простая валидация URL, можно заменить на более сложный regex
+  optionalUrl: (value) => {
+    if (!value) return true; 
+    return /^(ftp|http|https):\/\/[^ "]+$/.test(value) || 'Некорректный формат URL.';
+  },
+};
+
+// ------------------------------------
+// 2. Логика генерации токена
+// ------------------------------------
+
+/**
+ * Генерирует случайный токен в формате Base36.
+ * @returns {string} Случайная строка.
+ */
+const generateRandomToken = () => {
+  // Используем Base36 (0-9 и a-z) для генерации случайной строки.
+  // Мы берем две случайные части, чтобы увеличить энтропию.
+  const part1 = Math.random().toString(36).substring(2, 10);
+  const part2 = Date.now().toString(36); // Добавляем текущее время для уникальности
+  formData.token = `${part1}${part2}`.toUpperCase();
+};
+
+/**
+ * Вычисляет итоговую дату, исходя из выбранного интервала (относительно текущей даты).
+ */
+const calculatedDate = computed(() => {
+   if (useDatePicker.value) {
+        return formData.customDate;
+    }
+
+    // Режим Интервала
+    const today = new Date();
+    // ⭐️ ИСПОЛЬЗУЙТЕ form.dateRangeType напрямую
+    const type = formData.dateRangeType;
+    let targetDate = new Date(today);
+
+    // Добавляем соответствующий интервал к текущей дате
+    if (type === 'Неделя') {
+        targetDate.setDate(today.getDate() + 7);
+    } else if (type === 'Месяц') {
+        targetDate.setMonth(today.getMonth() + 1);
+    } 
+    // Если "День" — оставляем текущую дату
+
+    // Форматирование для отображения (YYYY-MM-DD)
+    const year = targetDate.getFullYear();
+    const month = String(targetDate.getMonth() + 1).padStart(2, '0');
+    const day = String(targetDate.getDate()).padStart(2, '0');
+    
+    // В объект formData мы сохраняем только отформатированную строку
+    // Это значение будет отправлено на сервер!
+    const formattedDate = `${year}-${month}-${day}`;
+    formData.calculatedDate = formattedDate; 
+    
+    return formattedDate;
+});
+
+// ------------------------------------
+// 3. Хук жизненного цикла
+// ------------------------------------
+
+
+
+// ------------------------------------
+// 4. Метод отправки формы
+// ------------------------------------
+const submitForm = () => {
+  // Определяем финальную дату перед отправкой
+  const finalDate = useDatePicker.value ? formData.customDate : calculatedDate.value;
+  validationErrors.value = {};
+  // Добавляем финальную дату в объект формы для отправки
+  formData.finalDate = finalDate;
+ 
+
+  // Отправка формы на URL-маршрут 'users.store' методом POST
+  formData.transform((data) => ({
+        ...data,
+        // Добавляем финальную дату в объект данных, который будет отправлен
+        finalDate: finalDate, 
+        
+        // Удаляем поля, которые не нужны серверу
+        dateRangeType: undefined, // Удаляем выбор интервала
+        customDate: undefined,    // Удаляем поле конкретной даты
+    })).post('/client/save', {
+      onSuccess: () => {
+          formSubmitted.value = true;
+          console.log('Форма успешно отправлена!');
+          // Дополнительно: можно сбросить форму: form.reset();
+      },
+      onError: (errors) => {
+          console.error('Ошибка при отправке формы:', errors);
+          // Ошибки автоматически доступны через props.errors
+          validationErrors.value = errors;
+      },
+  });
+};
+
+const addLink = () => {
+  formData.value.links.push('');
+};
+
+const removeLink = (index) => {
+  formData.value.links.splice(index, 1);
+};
+
+const goBack = () => {
+    // 1. Использование router.back()
+    // Это предпочтительный способ, он имитирует нажатие кнопки "Назад" в браузере.
+   router.get('/')
+    
+    // 2. ИЛИ Использование router.get() на конкретный маршрут (если router.back() вызывает проблемы)
+    // router.get('/users'); // Замените на фактический URL вашей таблицы
+};
+</script>
+
+<template>
+
+
+
+<v-container>
+  <v-alert
+        v-if="Object.keys(validationErrors).length > 0"
+        type="error"
+        title="Обнаружены ошибки валидации"
+        class="mb-4"
+        variant="tonal"
+    >
+        Пожалуйста, исправьте следующие поля:
+        <ul class="pt-2">
+            <li v-for="(error, key) in validationErrors" :key="key">
+                <strong>{{ key }}:</strong> {{ error }}
+            </li>
+        </ul>
+    </v-alert>
+    <v-form @submit.prevent="submitForm">
+      <v-card class="mx-auto pa-5">
+        <v-card-title class="text-h5 mb-4 ">
+          <v-btn
+            icon
+            variant="text"
+            size="small"
+            @click="goBack"
+            title="Назад к списку"
+            class="mr-2"
+          >
+            <v-icon>mdi-arrow-left</v-icon>
+          </v-btn>
+          Форма создания пользователя
+        </v-card-title>
+
+        <v-text-field
+          v-model="formData.name"
+          :rules="[rules.required]"
+          label="Имя пользователя"
+          variant="outlined"
+          prepend-inner-icon="mdi-account"
+          required density="compact"
+        ></v-text-field>
+
+<v-text-field
+  v-model="formData.token"
+  :rules="[rules.required]"
+  label="Токен"
+  variant="outlined"
+  prepend-inner-icon="mdi-key"
+  required density="compact"
+>
+  <template #append-inner>
+    <v-btn
+      icon
+      variant="text"
+      size="small"
+      @click="generateRandomToken"
+      title="Сгенерировать новый токен"
+    >
+      <v-icon>mdi-cached</v-icon>
+    </v-btn>
+  </template>
+</v-text-field>
+
+<v-text-field
+          v-model.number="formData.limitCount"
+          :rules="[rules.required, rules.integer, rules.positive]"
+          label="Количество лимитов"
+          variant="outlined"
+          prepend-inner-icon="mdi-counter"
+          type="number"
+          min="0"
+          required
+          class="mb-4"
+          density="compact"
+        ></v-text-field>
+
+        <v-switch
+          v-model="formData.isActive"
+          :label="formData.isActive ? 'Активен' : 'Отключен'"
+          color="primary"
+          inset
+          class="mb-4"
+          density="compact"
+        ></v-switch>
+
+      <v-switch
+          v-model="useDatePicker"
+          :label="useDatePicker ? 'Режим: Выбор конкретной даты' : 'Режим: Выбор интервала'"
+          color="secondary"
+          inset
+          class="mb-4"
+          density="compact"
+        ></v-switch>
+
+        <div v-if="!useDatePicker">
+          <v-select
+            v-model="formData.dateRangeType"
+            :items="dateRangeOptions"
+            label="Тип интервала (от текущей даты)"
+            variant="outlined"
+            prepend-inner-icon="mdi-calendar-range"
+            required
+            class="mb-4"
+            density="compact"
+          ></v-select>
+
+          <v-text-field
+            :model-value="calculatedDate"
+            label="Итоговая дата (вычислено)"
+            variant="outlined"
+            prepend-inner-icon="mdi-calendar-check"
+            readonly
+            hide-details
+            class="mb-4"
+            density="compact"
+          ></v-text-field>
+        </div>
+
+        <div v-else>
+          <v-text-field
+            v-model="formData.customDate"
+            :rules="[rules.required]"
+            label="Конкретная дата начала"
+            variant="outlined"
+            prepend-inner-icon="mdi-calendar"
+            type="date"
+            required
+            class="mb-4"
+            density="compact"
+          ></v-text-field>
+        </div>
+
+    <div v-for="(link, index) in formData.links" :key="index" class="d-flex align-center mb-4">
+          <v-text-field
+            v-model="formData.links[index]"
+            label="Ссылка (URL)"
+            variant="outlined"
+            prepend-inner-icon="mdi-link"
+            :rules="[rules.optionalUrl]"
+            hide-details
+            class="mr-2"
+            density="compact"
+          ></v-text-field>
+
+          <v-btn
+            v-if="formData.links.length > 1"
+            icon
+            color="error"
+            variant="tonal"
+            size="small"
+            @click="removeLink(index)"
+            class="mr-2"
+            density="compact"
+          >
+            <v-icon>mdi-minus</v-icon>
+          </v-btn>
+
+          <v-btn
+            v-if="index === formData.links.length - 1"
+            icon
+            color="success"
+            size="small"
+            @click="addLink"
+            density="compact"
+          >
+            <v-icon>mdi-plus</v-icon>
+          </v-btn>
+        </div>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn type="submit" density="compact" color="primary" size="small">
+            Создать пользователя
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-form>
+
+    <v-alert
+      v-if="formSubmitted"
+      type="success"
+      class="mt-4"
+      variant="tonal"
+
+    >
+      Данные отправлены: 
+    </v-alert>
+  </v-container>
+</template>
+
+<style scoped>
+.v-container {
+  max-width: 550px;
+}
+</style>

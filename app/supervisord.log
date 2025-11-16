@@ -1,0 +1,46 @@
+2025-11-09 12:07:45,247 WARN received SIGQUIT indicating exit request
+2025-11-09 12:07:45,248 INFO waiting for php-fpm, dev-worker_00 to die
+2025-11-09 12:07:45,258 INFO stopped: dev-worker_00 (exit status 0)
+2025-11-09 12:07:47,191 INFO supervisord started with pid 1
+2025-11-09 12:07:48,194 INFO spawned: 'php-fpm' with pid 7
+2025-11-09 12:07:48,195 INFO spawned: 'laravel-scheduler' with pid 8
+2025-11-09 12:07:48,197 INFO spawned: 'dev-worker_00' with pid 9
+2025-11-09 12:07:49,219 INFO success: php-fpm entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2025-11-09 12:07:49,219 INFO success: laravel-scheduler entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2025-11-09 12:07:49,219 INFO success: dev-worker_00 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2025-11-14 10:28:33,265 INFO exited: dev-worker_00 (exit status 0; expected)
+2025-11-14 10:28:34,307 INFO spawned: 'dev-worker_00' with pid 496
+2025-11-14 10:28:35,310 INFO success: dev-worker_00 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2025-11-14 11:28:34,444 INFO exited: dev-worker_00 (exit status 0; expected)
+2025-11-14 11:28:35,462 INFO spawned: 'dev-worker_00' with pid 981
+2025-11-14 11:28:36,463 INFO success: dev-worker_00 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2025-11-14 12:28:34,251 INFO exited: dev-worker_00 (exit status 0; expected)
+2025-11-14 12:28:35,267 INFO spawned: 'dev-worker_00' with pid 1469
+2025-11-14 12:28:36,268 INFO success: dev-worker_00 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2025-11-14 13:28:33,139 INFO exited: dev-worker_00 (exit status 0; expected)
+2025-11-14 13:28:34,157 INFO spawned: 'dev-worker_00' with pid 1954
+2025-11-14 13:28:35,159 INFO success: dev-worker_00 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2025-11-16 10:36:19,050 INFO supervisord started with pid 1
+2025-11-16 10:36:20,054 INFO spawned: 'php-fpm' with pid 7
+2025-11-16 10:36:20,063 INFO spawned: 'laravel-scheduler' with pid 8
+2025-11-16 10:36:20,065 INFO spawned: 'dev-worker_00' with pid 9
+2025-11-16 10:36:21,067 INFO success: php-fpm entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2025-11-16 10:36:21,067 INFO success: laravel-scheduler entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2025-11-16 10:36:21,067 INFO success: dev-worker_00 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2025-11-16 10:36:24,710 WARN exited: dev-worker_00 (exit status 1; not expected)
+2025-11-16 10:36:25,716 INFO spawned: 'dev-worker_00' with pid 20
+2025-11-16 10:36:26,718 INFO success: dev-worker_00 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2025-11-16 10:36:34,745 WARN received SIGQUIT indicating exit request
+2025-11-16 10:36:34,746 INFO waiting for php-fpm, laravel-scheduler, dev-worker_00 to die
+2025-11-16 10:36:34,752 INFO stopped: dev-worker_00 (exit status 0)
+2025-11-16 10:36:34,753 WARN stopped: laravel-scheduler (terminated by SIGTERM)
+2025-11-16 10:36:34,756 INFO stopped: php-fpm (exit status 0)
+2025-11-16 10:36:39,584 INFO supervisord started with pid 1
+2025-11-16 10:36:40,587 INFO spawned: 'php-fpm' with pid 7
+2025-11-16 10:36:40,589 INFO spawned: 'laravel-scheduler' with pid 8
+2025-11-16 10:36:40,591 INFO spawned: 'dev-worker_00' with pid 9
+2025-11-16 10:36:40,733 WARN exited: dev-worker_00 (exit status 1; not expected)
+2025-11-16 10:36:41,736 INFO success: php-fpm entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2025-11-16 10:36:41,736 INFO success: laravel-scheduler entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2025-11-16 10:36:41,737 INFO spawned: 'dev-worker_00' with pid 20
+2025-11-16 10:36:42,739 INFO success: dev-worker_00 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
