@@ -8,7 +8,7 @@ services:
     #command: sh -c ""
       
         
-    image: my-laravel-app
+    image: dtwdev777/syspartner2-app:latest
     expose:
       - "9000"
     # ports:
