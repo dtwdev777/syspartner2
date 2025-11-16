@@ -168,6 +168,16 @@ const goBack = () => {
             </li>
         </ul>
     </v-alert>
+    
+    <v-alert
+      v-if="formSubmitted"
+      type="success"
+      class="mt-4"
+      variant="tonal"
+
+    >
+      Пользователь создан: 
+    </v-alert>
     <v-form @submit.prevent="submitForm">
       <v-card class="mx-auto pa-5">
         <v-card-title class="text-h5 mb-4 ">
@@ -329,15 +339,6 @@ const goBack = () => {
       </v-card>
     </v-form>
 
-    <v-alert
-      v-if="formSubmitted"
-      type="success"
-      class="mt-4"
-      variant="tonal"
-
-    >
-      Данные отправлены: 
-    </v-alert>
   </v-container>
 </template>
 
