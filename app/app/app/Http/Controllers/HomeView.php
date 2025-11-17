@@ -19,7 +19,7 @@ class HomeView extends Controller
      try{
 
       $token = $request->input('token');
-      $client = Client::where(['token'=>$token])->first();
+      $client = Client::where(['token'=>$token])->where('is_active', true)->first();
       if($client['token'] == $token){
        $limit = (int)$client['limit_count'];
       return response('', 200)->header('X-UserId', $client['token'])
