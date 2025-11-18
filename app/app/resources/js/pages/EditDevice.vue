@@ -64,7 +64,7 @@
                 prepend-inner-icon="mdi-lock"
                 class="mb-4"
                 :disabled="isLoading"
-                density="compact"
+                density="compact"  readonly 
             >
                 <!-- Кнопка "Показать/Скрыть пароль" -->
                 <template v-slot:append-inner>
@@ -76,19 +76,23 @@
                 </template>
             </v-text-field>
             
-            <!-- Кнопка СБРОСИТЬ ПАРОЛЬ -->
-            <v-btn
-                @click="handleGenerateNewPassword"
+       
+             <v-select
+                v-model="deviceData.tariffId"
+                :items="tariffOptions"
+                item-title="title"
+                item-value="value"
+                label="Выберите Тариф"
+                placeholder="Например, Полный"
+                variant="outlined"
+                color="primary"
+                prepend-inner-icon="mdi-cash-multiple"
                 :disabled="isLoading"
-                color="amber-lighten-1"
-                size="small"
-                block
-                variant="tonal"
-                class="mb-4 font-weight-bold"
-            >
-                <v-icon icon="mdi-key-change" class="mr-2"></v-icon>
-                Сгенерировать НОВЫЙ Пароль
-            </v-btn>
+                class="mb-4"
+                hide-details="auto"
+                density="compact"
+                :rules="[v => !!v || 'Необходимо выбрать тариф']"
+            ></v-select>
 
             <!-- Поле Дата Годности -->
             <v-text-field
@@ -160,7 +164,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
+import { reactive, ref , computed } from 'vue';
 import { router , useForm } from '@inertiajs/vue3'
 
 // Интерфейс для данных устройства, как они будут использоваться локально
@@ -170,6 +174,8 @@ name: string; // ID
 password: string;
 isEnabled: boolean;
 validUntilDate: string;
+ tariffId: number | null;
+
 }
 
 // Интерфейс для входного пропса, как он приходит с сервера
@@ -180,14 +186,24 @@ password: string;
 token: string;
 status: boolean; // Входное имя 'status'
 finalDate: string; // Входное имя 'finalDate'
+ tariffId: number | null;
 }
 
 // 1. ИСПРАВЛЕНО: Определение входного параметра 'device'.
 // Мы используем TypeScript-синтаксис defineProps, чтобы разрешить 'null'.
 // Это устраняет ошибку "Expected Object, got Null".
+interface TariffItem extends Array<number | string> {
+    0: number; // ID тарифа
+    1: string; // Имя тарифа
+}
 const props = defineProps<{
-device: DeviceProp | null;
-}>();
+device: DeviceProp | null,
+tariffs :  {
+    type :  Array<TariffItem[]>, 
+     default: () => []
+  }
+}
+>();
 
 // Утилиты
 const generateNumericId = (): string => String(Math.floor(Math.random() * 99999999) + 1).padStart(8, '0');
@@ -207,6 +223,7 @@ password: props.device?.password || '',
 isEnabled: props.device?.status ?? true,
 // Используем 'finalDate' из пропса
 validUntilDate: props.device?.finalDate || getTodayDate(),
+ tariffId: props.device?.tariffId
 });
 
 const isSuccess = ref(false); // Для индикации успешного сохранения
@@ -214,6 +231,12 @@ const message = ref('');
 const isLoading = ref(false);
 const isPasswordVisible = ref(false);
 
+const tariffOptions = computed(() => {
+    return   props.tariffs.map((data) => ({
+        value: data.id,
+        title: data.name,
+    }));
+});
 // --- Методы ---
 
 /**

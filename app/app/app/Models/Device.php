@@ -14,7 +14,8 @@ class Device extends Model
         'password',
         'token',
         'status',
-        'final_date'
+        'final_date',
+        'tariff_id'
     ];
 
     

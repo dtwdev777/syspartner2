@@ -13,15 +13,20 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/vue3';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-vue-next';
+import { Link ,router } from '@inertiajs/vue3';
+import { BookOpen, Folder, LayoutGrid ,RadioReceiver } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
 const mainNavItems: NavItem[] = [
     {
-        title: 'Dashboard',
+        title: 'Playlist',
         href: dashboard(),
         icon: LayoutGrid,
+    },
+     {
+        title: 'Devices',
+        href: '/devices',
+        icon: RadioReceiver,
     },
     
 ];

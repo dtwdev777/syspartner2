@@ -56,6 +56,23 @@ max-width="500"
                 hide-details density="compact"
             ></v-text-field>
 
+               <v-select
+                v-model="deviceData.tariffId"
+                :items="tariffOptions"
+                item-title="title"
+                item-value="value"
+                label="Выберите Тариф"
+                placeholder="Например, Полный"
+                variant="outlined"
+                color="primary"
+                prepend-inner-icon="mdi-cash-multiple"
+                :disabled="isLoading"
+                class="mb-4"
+                hide-details="auto"
+                density="compact"
+                :rules="[v => !!v || 'Необходимо выбрать тариф']"
+            ></v-select>
+
             <!-- Поле Дата Годности (тип date для календаря) -->
             <v-text-field
                 v-model="deviceData.validUntilDate"
@@ -131,7 +148,7 @@ max-width="500"
 </template>
 
 <script setup lang="ts">
-import { ref , reactive } from 'vue';
+import { ref , reactive , computed} from 'vue';
 import { router, usePage , useForm } from '@inertiajs/vue3'
 const props = defineProps({
   token: {
@@ -139,14 +156,23 @@ const props = defineProps({
     required: true,
     default: () => ''
   },
+  tariffs:{
+    type :  Array<TariffItem[]>, 
+     default: () => []
+  }
   // Добавьте другие пропсы, если они есть
 });
+interface TariffItem extends Array<number | string> {
+    0: number; // ID тарифа
+    1: string; // Имя тарифа
+}
 // Интерфейс для данных устройства
 interface DeviceData {
 name: string;
 password: string;
 isEnabled: boolean;
 validUntilDate: string;
+ tariffId: number | null;
 }
 
 // Утилиты
@@ -166,8 +192,14 @@ name: '',           // ID Устройства (Логин)
 password: '',       // Пароль
 isEnabled: true,    // Статус: true = Включено
 validUntilDate: getOneYearFromNow(), // Дата годности (по умолчанию + 1 год)
+ tariffId: null,
 });
-
+const tariffOptions = computed(() => {
+    return   props.tariffs.map((data) => ({
+        value: data.id,
+        title: data.name,
+    }));
+});
 const isRegistered = ref(false);
 const message = ref('');
 const isLoading = ref(false);

@@ -4,7 +4,7 @@ namespace App\Services;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
-use DebugBar\DebugBar;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class IptvPortal
@@ -14,7 +14,7 @@ class IptvPortal
   private $password = "";
   private $result = "";
   private $token = "";
-  protected $id =1;
+  protected $id =1000;
 
   public function __construct()
   {
@@ -63,6 +63,8 @@ class IptvPortal
       }
     );
     $promise->wait();
+   
+            
     return $this->result;
   }
   /**
@@ -70,6 +72,7 @@ class IptvPortal
    */
   public function add_account($data)
   {
+   
     $databody  =   [
       "jsonrpc" => "2.0",
       "id" => $this->id++,
@@ -77,7 +80,7 @@ class IptvPortal
       "params" => [
         "into" => "subscriber",
         "columns" => ["username", "password", "surname", "email"],
-        "values" => [["{$data['login']}", "{$data['password']}", "{$data['full_name']}", "laratest@duga.tv"]],
+        "values" => [["{$data['login']}", "{$data['password']}", "{$data['full_name']}", "laratest@test.tv"]],
         "returning" => "id"
       ]
     ];
@@ -96,13 +99,85 @@ class IptvPortal
         }
       },
       function ($error) {
+         Log::error("Ответ клинета при ошибки", [
+                'error' =>$error->getMessage() ,
+               
+            ]);
 
         echo $error->getMessage();
       }
     );
     $promise->wait();
-     $this->set_tarrif($this->result->result[0], $data['tariff_plan'] ,$data['expire']);
+      $this->set_tarrif($this->result->result[0], $data['tariff_plan'] ,$data['expire']);
+      Log::error("Ответ", [
+                 'token' => $this->token,
+                'result' =>$this->result ,
+               
+            ]);
     
+    return $this->result;
+   
+  }
+  /**
+   * set tariff
+   */
+  public function set_tarrif($user_id, $package_id, $expire=null)
+  {
+    $data = [];
+    $data  = [$user_id, $package_id , $expire ,true] ;
+  //  foreach($package_id   as $key=> $val){
+  //    array_push($data ,[$user_id, $val , $expire ,true]) ;
+  //  }
+   
+Log::error("Data", [
+                'data' =>$data ,
+               
+            ]);
+   // \Debugbar::info("info",$this->id++);
+    $databody  =   [
+      "jsonrpc" => "2.0",
+      "id" => $this->id++,
+      "method" => "insert",
+      "params" => [
+        "into" => "subscriber_package",
+        "columns" => ["subscriber_id", "package_id" ,"expired_on","enabled"],
+        "values" => $data ,
+        "returning" => "id"
+      ]
+    ];
+  
+
+    $params = ['json' => $databody];
+    $header_opt = ['verify' => false, 'timeout'  => 60, 'headers' => ['Iptvportal-Authorization' => "sessionid={$this->token}", 'User-Agent' => "User-Agent: Mozilla/5.0", 'Content-Type' => 'application/json']];
+    $client = new Client($header_opt);
+    $promise =  $client->postAsync($this->url . '/jsonsql/', $params);
+  
+    $promise->then(
+      function ($response) {
+        $res =  $response->getBody();
+        $this->headers = $response->getHeaders();
+        if ($response->getStatusCode()  == 200) {
+
+          $this->result = json_decode($res);
+          
+        }
+      },
+      function ($error) {
+        Log::error("Ответ", [
+                'error' =>  $error->getMessage(),
+               
+            ]);
+        echo $error->getMessage();
+      }
+    );
+  
+ 
+    $promise->wait();
+   
+     Log::error("Ответ создание пакета", [
+                'result' =>$this->result ,
+               
+            ]);
     return $this->result;
   }
   /**
@@ -181,59 +256,7 @@ class IptvPortal
     $promise->wait();
     return $this->result;
   }
-  /**
-   * set tariff
-   */
-  public function set_tarrif($user_id, $package_id, $expire=null)
-  {
-    $data = [];
-   
-   foreach($package_id   as $key=> $val){
-     array_push($data ,[$user_id, $val , $expire ,true]) ;
-   }
-   
-
-    \Debugbar::info("info",$this->id++);
-    $databody  =   [
-      "jsonrpc" => "2.0",
-      "id" => $this->id++,
-      "method" => "insert",
-      "params" => [
-        "into" => "subscriber_package",
-        "columns" => ["subscriber_id", "package_id" ,"expired_on","enabled"],
-        "values" => $data ,
-        "returning" => "id"
-      ]
-    ];
   
-
-    $params = ['json' => $databody];
-    $header_opt = ['verify' => false, 'timeout'  => 60, 'headers' => ['Iptvportal-Authorization' => "sessionid={$this->token}", 'User-Agent' => "User-Agent: Mozilla/5.0", 'Content-Type' => 'application/json']];
-    $client = new Client($header_opt);
-    $promise =  $client->postAsync($this->url . '/jsonsql/', $params);
-  
-    $promise->then(
-      function ($response) {
-        $res =  $response->getBody();
-        $this->headers = $response->getHeaders();
-        if ($response->getStatusCode()  == 200) {
-
-          $this->result = json_decode($res);
-          \Debugbar::info("responce from api server", $this->result);
-        }
-      },
-      function ($error) {
-        \Debugbar::info("responce from api server", $error->getMessage());
-        echo $error->getMessage();
-      }
-    );
-  
- 
-    $promise->wait();
-    \Debugbar::info("responce from api server", $this->result);
-   // dd("stop");
-    return $this->result;
-  }
 
   public function info_debug(){
     try{
@@ -258,11 +281,11 @@ class IptvPortal
           if ($response->getStatusCode()  == 200) {
   
             $this->result = json_decode($res);
-            \Debugbar::info("from subscriber", $this->result);
+          
           }
         },
         function ($error) {
-          \Debugbar::info("responce from api server", $error->getMessage());
+        
           echo $error->getMessage();
         }
       );

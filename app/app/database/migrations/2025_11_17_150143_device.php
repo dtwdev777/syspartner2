@@ -15,9 +15,11 @@ return new class extends Migration
             $table->bigIncrements('id');
             $table->string('name')->nullable();
             $table->string('password')->nullable();
+            $table->unsignedInteger('tariff_id')->nullable();
             $table->string('token');
             $table->boolean('status');
             $table->timestamp('final_date')->nullable();
+            
             $table->timestamps();
           
         });

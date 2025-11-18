@@ -1,5 +1,5 @@
 <template>
-   
+   <AppLayout :breadcrumbs="breadcrumbs">
  <v-card class="mx-auto mt-5 antenna-background" max-width="900">
    
     <v-alert
@@ -90,7 +90,7 @@
 
     </v-data-table>
   </v-card>
-
+</AppLayout>
 
 </template>
 
