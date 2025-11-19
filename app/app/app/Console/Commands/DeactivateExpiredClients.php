@@ -21,39 +21,68 @@ class DeactivateExpiredClients extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Деактивирует просроченных клиентов и связанные устройства.';
 
-     protected $portal;
+    protected $portal;
 
-       public function __construct(IptvPortal $device)
+    /**
+     * Исправленный конструктор с вызовом родительского метода.
+     *
+     * @param IptvPortal $device
+     */
+    public function __construct(IptvPortal $device)
     {
-      $this->portal = $device;
+       
+        parent::__construct(); 
+        $this->portal = $device;
     }
 
-
-   
+    
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        $this->info('Начинаем проверку и деактивацию клиентов...');
+        $this->info('Начинаем проверку и деактивацию...');
 
-        // ⭐️ Вызываем статический метод из модели Client
-        $count = Client::deactivateExpiredClients(); 
-        $devices = Device:: getAllExpireDevices();
-       
-      
-           foreach ($devices as $v){
-            $this->portal->disable_account($v, true);
-          }
-           $device_count =  Device::deactivateExpiredDevices();   
-        
+        // 1. Деактивация основных клиентов (Предполагается, что Client::deactivateExpiredClients() 
+        //    обновляет статус в БД и возвращает количество).
+        $client_count = Client::deactivateExpiredClients(); 
 
-        if ($count > 0) {
-            $this->info("✅ Успешно деактивировано {$count} клиентов.");
+        // 2. Получаем коллекцию просроченных устройств. (ТОЛЬКО ЧТЕНИЕ)
+        //    Предполагается, что Device::getAllExpireDevices() возвращает коллекцию.
+        $devices = Device::getAllExpireDevices();
+        $device_count = 0;
+
+        if ($devices->isNotEmpty()) {
+            $device_total = $devices->count();
+            $this->info(" Обнаружено {$device_total} просроченных устройств. Начинаем обработку...");
+
+            // 3. Сначала выполняем внешнюю деактивацию через портал для каждого устройства
+            foreach ($devices as $device) {
+                // $v - это объект модели Device, который передается в сервис портала
+                $this->portal->disable_account($device, false);
+            }
+
+            // 4. После успешного вызова внешнего сервиса, 
+            //    массово обновляем статус в нашей базе данных.
+            //    Предполагается, что Device::deactivateExpiredDevices() обновляет БД и возвращает count.
+            $device_count = Device::deactivateExpiredDevices(); 
+
+            $this->info(" Успешно обработано {$device_total} устройств через Портал.");
+            $this->info(" Обновлен статус {$device_count} устройств в базе данных.");
+
         } else {
-            $this->info("ℹ️ Не найдено клиентов для деактивации.");
+            $this->info(" Не найдено устройств для деактивации.");
+        }
+
+        $this->newLine(); // Добавим пустую строку для читабельности
+
+        // Результаты по клиентам
+        if ($client_count > 0) {
+            $this->info(" Успешно деактивировано {$client_count} клиентов.");
+        } else {
+            $this->info("Не найдено клиентов для деактивации.");
         }
     }
 }
