@@ -57,7 +57,7 @@
           :prepend-icon="item.status ? 'mdi-check-circle' : 'mdi-close-circle'"
           size="small"
         >
-          {{ item.is_active ? 'Да' : 'Нет' }}
+          {{ item.status ? 'Да' : 'Нет' }}
         </v-chip>
       </template>
 

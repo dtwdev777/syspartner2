@@ -170,11 +170,69 @@ Log::error("Data", [
         echo $error->getMessage();
       }
     );
+
+
   
  
     $promise->wait();
    
      Log::error("Ответ создание пакета", [
+                'result' =>$this->result ,
+               
+            ]);
+    return $this->result;
+  }
+
+   /**
+   * set update date
+   */
+  public function update_tarrif($user_id, $expire=null)
+  {
+   $user_res = $this->get_user_id($user_id);
+   $user = $user_res->result[0][0];
+   $databody = [
+      "jsonrpc" => "2.0",
+      "id" => 2,
+      "method" => "update",
+      "params" => [
+        "table" => "subscriber_package",
+        "set" => ["expired_on" => $expire],
+        "where" =>  ["eq" => ["subscriber_id", "$user"]],
+        "returning" => "id",
+      ]
+      ];
+  
+
+    $params = ['json' => $databody];
+    $header_opt = ['verify' => false, 'timeout'  => 60, 'headers' => ['Iptvportal-Authorization' => "sessionid={$this->token}", 'User-Agent' => "User-Agent: Mozilla/5.0", 'Content-Type' => 'application/json']];
+    $client = new Client($header_opt);
+    $promise =  $client->postAsync($this->url . '/jsonsql/', $params);
+  
+    $promise->then(
+      function ($response) {
+        $res =  $response->getBody();
+        $this->headers = $response->getHeaders();
+        if ($response->getStatusCode()  == 200) {
+
+          $this->result = json_decode($res);
+          
+        }
+      },
+      function ($error) {
+        Log::error("Ответ", [
+                'error' =>  $error->getMessage(),
+               
+            ]);
+        echo $error->getMessage();
+      }
+    );
+
+    
+  
+ 
+    $promise->wait();
+   
+     Log::error("Ответ обновление пакета", [
                 'result' =>$this->result ,
                
             ]);
@@ -313,7 +371,7 @@ Log::error("Data", [
       "method" => "update",
       "params" => [
         "table" => "subscriber",
-        "set" => ["disabled" => $status],
+        "set" => ["disabled" => !$status],
         "where" =>  ["eq" => ["username", "$user"]],
         "returning" => "id",
       ]

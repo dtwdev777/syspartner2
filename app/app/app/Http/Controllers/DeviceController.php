@@ -19,10 +19,15 @@ class DeviceController extends Controller
     }
 
     public function index(Device $device){
-      
-        return Inertia::render('DeviceList', [
+
+     return Inertia::render('DeviceList', [
         'devices' => $device->all() ,
     ]);
+    }
+
+    private function debug(){
+        $all = $this->portal->info_debug();
+      dd($all);
     }
 
     public function create(){
@@ -146,6 +151,8 @@ class DeviceController extends Controller
 
         $this->portal->disable_account($validated['name'], $validated['isEnabled']);
         $this->portal->change_tarrifs(['id'=>$validated['name'], 'tariffs'=>$validated['tariffId']]);
+        $update_tariff = $this->portal->update_tarrif($validated['name'],$validated['validUntilDate']);
+       
 
         // 3. Возврат Inertia-совместимого ответа (редирект)
         return redirect()

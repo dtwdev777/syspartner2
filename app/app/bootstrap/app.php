@@ -27,7 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
         
     })
     ->withSchedule(function (Schedule $schedule) {
-        // ⭐️ Здесь мы регистрируем вашу команду и ее расписание
+      
         $schedule->command(DeactivateExpiredClients::class)
                  ->everyMinute() // Запускать ежедневно в 01:00 ночи
                  ->withoutOverlapping()

@@ -4,6 +4,8 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Models\Client;
+use App\Models\Device;
+use App\Services\IptvPortal;
 
 class DeactivateExpiredClients extends Command
 {
@@ -21,6 +23,15 @@ class DeactivateExpiredClients extends Command
      */
     protected $description = 'Command description';
 
+     protected $portal;
+
+       public function __construct(IptvPortal $device)
+    {
+      $this->portal = $device;
+    }
+
+
+   
     /**
      * Execute the console command.
      */
@@ -30,6 +41,14 @@ class DeactivateExpiredClients extends Command
 
         // ⭐️ Вызываем статический метод из модели Client
         $count = Client::deactivateExpiredClients(); 
+        $devices = Device:: getAllExpireDevices();
+        $device_count =  Device::deactivateExpiredDevices();
+        if($device_count > 0){
+          
+           foreach ($devices as $v){
+            $this->portal->disable_account($v, true);
+          }   
+        }
 
         if ($count > 0) {
             $this->info("✅ Успешно деактивировано {$count} клиентов.");
