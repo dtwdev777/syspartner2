@@ -128,3 +128,29 @@
 2025-11-19 10:35:04,131 INFO exited: dev-worker_00 (exit status 0; expected)
 2025-11-19 10:35:05,157 INFO spawned: 'dev-worker_00' with pid 555
 2025-11-19 10:35:06,159 INFO success: dev-worker_00 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2025-11-19 11:30:29,903 INFO exited: dev-worker_00 (exit status 0; expected)
+2025-11-19 11:30:30,930 INFO spawned: 'dev-worker_00' with pid 1079
+2025-11-19 11:30:31,283 WARN exited: dev-worker_00 (exit status 1; not expected)
+2025-11-19 11:30:30,984 INFO spawned: 'dev-worker_00' with pid 1083
+2025-11-19 11:30:31,272 WARN exited: dev-worker_00 (exit status 1; not expected)
+2025-11-19 11:30:33,279 INFO spawned: 'dev-worker_00' with pid 1087
+2025-11-19 11:30:33,565 WARN exited: dev-worker_00 (exit status 1; not expected)
+2025-11-19 11:30:36,570 INFO spawned: 'dev-worker_00' with pid 1091
+2025-11-19 11:30:36,861 WARN exited: dev-worker_00 (exit status 1; not expected)
+2025-11-19 11:30:37,863 INFO gave up: dev-worker_00 entered FATAL state, too many start retries too quickly
+2025-11-19 11:43:47,503 WARN received SIGQUIT indicating exit request
+2025-11-19 11:43:47,506 INFO waiting for php-fpm, laravel-scheduler to die
+2025-11-19 11:44:01,612 INFO supervisord started with pid 1
+2025-11-19 11:44:02,615 INFO spawned: 'php-fpm' with pid 8
+2025-11-19 11:44:02,617 INFO spawned: 'laravel-scheduler' with pid 9
+2025-11-19 11:44:02,619 INFO spawned: 'dev-worker_00' with pid 10
+2025-11-19 11:44:02,934 WARN exited: dev-worker_00 (exit status 1; not expected)
+2025-11-19 11:44:03,942 INFO success: php-fpm entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2025-11-19 11:44:03,943 INFO success: laravel-scheduler entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2025-11-19 11:44:03,944 INFO spawned: 'dev-worker_00' with pid 21
+2025-11-19 11:44:04,228 WARN exited: dev-worker_00 (exit status 1; not expected)
+2025-11-19 11:44:06,235 INFO spawned: 'dev-worker_00' with pid 25
+2025-11-19 11:44:06,532 WARN exited: dev-worker_00 (exit status 1; not expected)
+2025-11-19 11:44:09,542 INFO spawned: 'dev-worker_00' with pid 29
+2025-11-19 11:44:09,832 WARN exited: dev-worker_00 (exit status 1; not expected)
+2025-11-19 11:44:10,834 INFO gave up: dev-worker_00 entered FATAL state, too many start retries too quickly
