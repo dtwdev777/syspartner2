@@ -1,0 +1,8 @@
+  stream _MYTV {
+    input hls://tv1.myiptv.ru:8080/mytv8569r71/index.m3u8?token=iloomx257mr99z1;
+    title MYTV;
+}
+    stream _MYTV2 {
+    input hls://tv1.myiptv.ru:8080/mytv8569r72/index.m3u8?token=iloomx257mr99z1;
+    title MYTV2;
+}

@@ -5,6 +5,8 @@ use Inertia\Inertia;
 use App\Http\Controllers\HomeView;
 use App\Http\Controllers\ControllerClient;
 use App\Http\Controllers\DeviceController;
+use App\Http\Controllers\Packages;
+use App\Http\Controllers\Channels;
 
 Route::get('/home', function () {
     return Inertia::render('Welcome');
@@ -32,7 +34,22 @@ Route::post('/device-create',[DeviceController::class,'store'])->name('device.cr
 Route::put('/device-update/{device}',[DeviceController::class,'update'])->name('device.update');
 Route::delete('/device-delete/{device}',[DeviceController::class,'destroy'])->name('device.destroy');
 
+//chanels
+Route::get('/channels',[Channels::class ,'index'])->name('channels.index');
+
+Route::get('/channel/{channel}', [Channels::class, 'edit'])->name('channel.edit');
+Route::put('/channel/{channel}/update', [Channels::class, 'update'])->name('channel.update');
+
+Route::get('/channel-new',[Channels::class ,'create'])->name('channel.new');
+Route::post('/channel-create',[Channels::class ,'store'])->name('channel.store');
+Route::delete('/channel/{channel}', [Channels::class, 'destroy'])->name('channel.delete');
+
+Route::get('/countries',[Channels::class ,'country_add'])->name('countries.index');
+Route::post('/countries',[Channels::class ,'country_save'])->name('countries.store');
+Route::delete('/channel-country/{channel}/{country}', [Channels::class, 'detach']);
+
 });
+
 
 
 

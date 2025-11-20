@@ -24,7 +24,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
            // ClientSeeder::class, //  Добавьте ваш сидер сюда
          //  UserSeeder::class
-           DeviceSeeder::class
+         //  DeviceSeeder::class
+        CountrySeeder::class
         ]);
     }
 }

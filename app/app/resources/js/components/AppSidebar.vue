@@ -14,19 +14,32 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link ,router } from '@inertiajs/vue3';
-import { BookOpen, Folder, LayoutGrid ,RadioReceiver } from 'lucide-vue-next';
+import { BookOpen, Folder, LayoutGrid ,RadioReceiver ,Antenna ,Eclipse } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
 const mainNavItems: NavItem[] = [
     {
-        title: 'Playlist',
+        title: 'Клиенты',
         href: dashboard(),
         icon: LayoutGrid,
     },
      {
-        title: 'Devices',
+        title: 'Ип портал ',
         href: '/devices',
         icon: RadioReceiver,
+    },
+
+     {
+        title: 'Каналы',
+        href: '/channels',
+        icon: Antenna,
+    
+    },
+      {
+        title: 'Страны привязка',
+        href: '/countries',
+        icon: Eclipse,
+    
     },
     
 ];
