@@ -53,7 +53,7 @@ Route::get('/package-new',[Packages::class ,'create'])->name('package.new');
 Route::get('/package-edit/{package}',[Packages::class ,'edit'])->name('package.edit');
 Route::put('/package/{package}/update',[Packages::class ,'update'])->name('package.update');
 Route::post('/package',[Packages::class ,'store'])->name('package.store');
-Route::delete('/package/{package}',[Packages::class ,'destroy'])->name('package.delete');
+Route::delete('/packages/{package}',[Packages::class ,'destroy'])->name('package.delete');
 
 });
 
