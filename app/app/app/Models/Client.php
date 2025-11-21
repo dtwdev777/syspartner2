@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class Client extends Model
 {
     use HasFactory;
@@ -58,6 +58,12 @@ class Client extends Model
         return $this->hasMany(ClientLink::class, 'client_id');
     }
 
+    public function packages(): BelongsToMany
+    {
+        return $this->belongsToMany(Package::class, 'clients_packages')
+                    ->withTimestamps();
+    }
+
     /**
      * Метод экземпляра: Проверяет и обновляет статус is_active для ТЕКУЩЕГО клиента.
      */
@@ -91,4 +97,8 @@ class Client extends Model
 
         return $updatedCount;
     }
+   
+
+   
+   
 }

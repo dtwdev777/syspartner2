@@ -1,17 +1,31 @@
 <script setup lang="ts">
-import { ref , computed } from 'vue'
+import { ref , computed ,onMounted } from 'vue'
 import { router } from '@inertiajs/vue3'; //  Импорт router для навигации
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { dashboard } from '@/routes';
+
+
+interface FlashProps {
+    success: string | null;
+    error: string | null;
+    // Добавьте другие типы сообщений, если используете (e.g., warning: string | null)
+}
 const props = defineProps({
   clients: {
     type: Array,
     required: true,
     default: () => []
   },
+   flash: {
+        type: Object, // PropType<FlashProps>
+        required: false,
+        default: () => ({ success: null, error: null })
+    },
+  
   // Добавьте другие пропсы, если они есть
 });
+const flashMessage = ref(props.flash.success);
 const density = ref('compact');
 const search = ref('')
 const headers = [
@@ -87,6 +101,14 @@ const deleteClient = (client) => {
     }
 };
 
+onMounted(() => {
+    // Устанавливаем таймаут только если сообщение существует
+    if (flashMessage.value) {
+        setTimeout(() => {
+            flashMessage.value = null; // Скрываем сообщение
+        }, 5000); // 5 секунд
+    }
+});
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -95,11 +117,30 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
+const viewClient = (client) => {
+  console.log('Просмотр клиента:', client.id, client.name);
+  // Переход на страницу просмотра
+  router.get(`/client-package/${client.id}`);
+};
+
 </script>
 
 <template>
  <AppLayout :breadcrumbs="breadcrumbs">
- <v-card class="mx-auto mt-5 antenna-background" max-width="900">
+ <v-card class="mx-auto mt-5 antenna-background" max-width="950">
+  
+    <v-alert
+        v-if="flashMessage"
+        type="success"
+        title="Успех"
+        icon="mdi-check-circle"
+        closable
+        class="mx-auto mt-5 mb-4 elevation-2"
+        max-width="900"
+        @click:close="flashMessage = null"
+    >
+        {{ flashMessage }}
+    </v-alert>
     <v-card-title class="text-h5 pa-4 title-text">
       Список клиентов ({{ clients.length }})
       <v-spacer></v-spacer>
@@ -152,6 +193,17 @@ const breadcrumbs: BreadcrumbItem[] = [
       </template>
       
       <template v-slot:item.actions="{ item }">
+         <!-- Кнопка "Смотреть" -->
+  <v-btn 
+    icon 
+    size="small" 
+    variant="text" 
+    color="info"
+    @click="viewClient(item)"
+    title="Привязка пакета"
+  >
+    <v-icon>mdi-eye</v-icon>
+  </v-btn>
         <v-btn 
           icon 
           size="small" 
@@ -162,6 +214,7 @@ const breadcrumbs: BreadcrumbItem[] = [
         >
           <v-icon>mdi-pencil</v-icon>
         </v-btn>
+
         <v-btn 
           icon 
           size="small" 

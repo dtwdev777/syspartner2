@@ -7,6 +7,8 @@ use Inertia\Inertia;
 use App\Models\Client;
 use App\Models\ClientLink;
 use Illuminate\Support\Facades\DB;
+use App\Models\Package;
+
 use Throwable;
 class ControllerClient extends Controller
 {
@@ -163,6 +165,42 @@ public function destroy(Client $client) // Используем Route Model Bind
         // ИЛИ на список:
         // return redirect()->route('clients.index')->with('success', 'Клиент успешно обновлен.');
     }
+
+
+    public function client_package(Client $client){
+
+      $packages = Package::all();
+
+    // Передаём клиента и список пакетов во Vue
+   return inertia('ClientPackageForm', [
+        'client' => [
+            'id' => $client->id,
+            'name' => $client->name,
+            'package_id' => $client->packages()->first()?->id, // 👈 текущий пакет
+        ],
+        'packages' => $packages,
+    ]);
 }
+
+public function client_save(Request $request, Client $client)
+{
+   $validated = $request->validate([
+        'package_id' => 'required|exists:packages,id',
+    ]);
+
+   
+
+    // Если клиент может иметь только один пакет → sync
+    $client->packages()->sync([$validated['package_id']]);
+
+    return redirect()->route('clients.index')->with('success', 'Пакет обновлён для клиента');
+}
+
+      }
+
+    
+
+   
+
 
 

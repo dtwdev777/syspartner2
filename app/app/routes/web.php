@@ -55,6 +55,10 @@ Route::put('/package/{package}/update',[Packages::class ,'update'])->name('packa
 Route::post('/package',[Packages::class ,'store'])->name('package.store');
 Route::delete('/packages/{package}',[Packages::class ,'destroy'])->name('package.delete');
 
+// LinkPackage
+Route::get('/client-package/{client}',[ControllerClient::class,'client_package'])->name('client.package');
+Route::post('/client-save/{client}',[ControllerClient::class,'client_save'])->name('client.save');
+
 });
 
 

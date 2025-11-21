@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
            // ClientSeeder::class, //  Добавьте ваш сидер сюда
          //  UserSeeder::class
          //  DeviceSeeder::class
-        CountrySeeder::class
+         // CountrySeeder::class
         ]);
     }
 }
