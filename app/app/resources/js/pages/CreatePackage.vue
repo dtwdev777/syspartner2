@@ -2,6 +2,14 @@
   <v-card class="max-w-xl mx-auto mt-10" elevation="6" rounded="lg">
     <v-card-title class="text-h5 font-weight-bold py-4 text-black">
       <div class="text-center w-full">Создание Канала</div>
+         <v-btn
+    color="grey"
+    variant="outlined"
+    prepend-icon="mdi-arrow-left"
+    @click="goBack"
+  >
+    Назад
+  </v-btn>
     </v-card-title>
 
     <v-card-text class="py-6 px-4">
@@ -100,6 +108,13 @@ const submitForm = () => {
       console.error('Ошибка при создании:', e);
     }
   });
+};
+const goBack = () => {
+  // Вариант 1: просто назад в истории браузера
+  window.history.back();
+
+  // Вариант 2: переход на список пакетов
+  // router.get('/packages');
 };
 </script>
 
