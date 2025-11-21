@@ -47,6 +47,13 @@ Route::delete('/channel/{channel}', [Channels::class, 'destroy'])->name('channel
 Route::get('/countries',[Channels::class ,'country_add'])->name('countries.index');
 Route::post('/countries',[Channels::class ,'country_save'])->name('countries.store');
 Route::delete('/channel-country/{channel}/{country}', [Channels::class, 'detach']);
+//Packages
+Route::get('/packages',[Packages::class ,'index'])->name('packages.index');
+Route::get('/package-new',[Packages::class ,'create'])->name('package.new');
+Route::get('/package-edit/{package}',[Packages::class ,'edit'])->name('package.edit');
+Route::put('/package/{package}/update',[Packages::class ,'update'])->name('package.update');
+Route::post('/package',[Packages::class ,'store'])->name('package.store');
+Route::delete('/package/{package}',[Packages::class ,'destroy'])->name('package.delete');
 
 });
 

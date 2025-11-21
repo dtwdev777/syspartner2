@@ -11,4 +11,10 @@ class Country extends Model
     return $this->belongsToMany(Channel::class, 'channel_country');
 }
 
+
+    public function packages()
+    {
+        return $this->belongsToMany(Package::class, 'packages_countries');
+    }
+
 }

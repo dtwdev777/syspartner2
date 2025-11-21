@@ -14,7 +14,7 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link ,router } from '@inertiajs/vue3';
-import { BookOpen, Folder, LayoutGrid ,RadioReceiver ,Antenna ,Eclipse } from 'lucide-vue-next';
+import { BookOpen, Folder, LayoutGrid ,RadioReceiver ,Antenna ,Eclipse , Package } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
 const mainNavItems: NavItem[] = [
@@ -29,6 +29,13 @@ const mainNavItems: NavItem[] = [
         icon: RadioReceiver,
     },
 
+      {
+        title: 'Пакеты',
+        href: '/packages',
+        icon: Package ,
+    
+    },
+
      {
         title: 'Каналы',
         href: '/channels',
@@ -41,6 +48,7 @@ const mainNavItems: NavItem[] = [
         icon: Eclipse,
     
     },
+    
     
 ];
 
