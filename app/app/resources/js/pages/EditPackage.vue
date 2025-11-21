@@ -1,7 +1,7 @@
 <template>
   <v-card class="max-w-xl mx-auto mt-10" elevation="6" rounded="lg">
     <v-card-title class="text-h5 font-weight-bold py-4 text-black">
-      <div class="text-center w-full">Редактирование Канала</div>
+      <div class="text-center w-full">Редактирование Пакета</div>
       <v-btn
     color="grey"
     variant="outlined"
