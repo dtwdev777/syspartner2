@@ -2,7 +2,8 @@
 import { ref, onMounted, computed, defineProps , watch } from 'vue';
 import { useForm ,router } from '@inertiajs/vue3';
 // useForm и router уже импортированы
-const BASE_URL = ''
+const domain = "http://"+window.location.hostname+"/playlist";
+const BASE_URL = domain;
 // ------------------------------------
 // 0. Props: Получение данных пользователя
 // ------------------------------------

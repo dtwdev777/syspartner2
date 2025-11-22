@@ -8,6 +8,8 @@ use App\Models\Client;
 use App\Models\ClientLink;
 use Illuminate\Support\Facades\DB;
 use App\Models\Package;
+use App\Services\IpGenerator;
+use App\Services\IptvPortal;
 
 use Throwable;
 class ControllerClient extends Controller
@@ -196,7 +198,60 @@ public function client_save(Request $request, Client $client)
     return redirect()->route('clients.index')->with('success', 'Пакет обновлён для клиента');
 }
 
-      }
+
+public function playlist(Request $request , IpGenerator $ipGenerator){
+  try{
+    $hash = $request->input('token');
+    $client = Client::where('token', $hash)->firstOrFail();
+
+// Получаем первый пакет клиента (если нужен только один)
+$package = $client->packages()->first();
+
+// Коллекция для плейлиста
+$playlist = collect();
+
+// Формируем плейлист по странам и категориям
+foreach ($package->countries as $country) {
+
+    foreach ($country->channels as $channel) {
+        $playlist->push([
+             $country->name => $channel,
+        ]);
+    }
+}
+
+
+
+            
+              if(!$playlist->isEmpty()){
+                $data = $ipGenerator::create_playlist($playlist ,"", "m3u8", $hash);
+                // header('Content-Type: text/plain');
+                //  header  ontent-Disposition: attachment; filename="'.$download.'"');
+               
+                 return response($data,200)->header('Content-Type','audio/x-mpegurl')
+                  ->header('Expires', '-1')
+                  ->header('Cache-Control', 'must-revalidate')
+                  ->header('Pragma', 'public');
+
+              }
+              else{
+                  return response()->json([ 'msg'=>'package not exit']);
+              }
+             
+          
+          }
+       catch(Throwable $err){
+        return response()->json(['msg'=>$err->getMessage()]);
+    }
+   }
+
+
+  
+  
+      
+
+
+}
 
     
 

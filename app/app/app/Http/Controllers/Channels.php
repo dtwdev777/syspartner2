@@ -199,6 +199,21 @@ public function detach(Channel $channel, Country $country)
     return redirect()->back()->with('success', 'Страна отвязана от канала');
 }
 
+public function all_delete(Request $request)
+{
+    $ids = $request->input('ids');
+
+    if (!is_array($ids) || empty($ids)) {
+        return response()->json(['error' => 'Нет ID для удаления'], 400);
+    }
+
+    Channel::whereIn('id', $ids)->delete();
+
+    return redirect()
+            ->route('channels.index') // Предполагаемый маршрут для списка устройств
+            ->with('success', 'Каналы  удален');
+}
+
 }
 
 

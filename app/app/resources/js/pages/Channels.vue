@@ -13,6 +13,7 @@
     >
         {{ flashMessage }}
     </v-alert>
+
     <v-card-title class="text-h5 font-weight-bold py-4 text-black">
       <div class="text-center w-full">Список Каналов</div>
         <v-btn
@@ -24,6 +25,18 @@
       >
         Добавить каналы
       </v-btn>
+      <v-btn
+  color="error"
+  
+  prepend-icon="mdi-delete"
+  
+   size="small"
+  @click="deleteSelectedAll"
+>
+  Удалить выбранные 
+</v-btn>
+ 
+
     </v-card-title>
 
     <v-card-text>
@@ -47,6 +60,9 @@
         density="compact"
         hover
         class="elevation-1"
+        show-select                
+        v-model="selectedIds"
+        
       >
         <!-- Ссылка -->
         <template #item.link="{ item }">
@@ -134,6 +150,26 @@ onMounted(() => {
         }, 5000); // 5 секунд
     }
 });
+const selectedIds = ref<number[]>([]);
+
+const deleteSelectedAll = () => {
+ // console.log("clik" , selectedIds.value);
+
+  if (!selectedIds.value.length) {
+    console.log("no id ")
+    return;
+  } 
+
+  if (confirm(`Удалить ${selectedIds.value.length} выбранных каналов?`)) {
+    // Отправляем один запрос на сервер
+    router.post('/package/all', { ids: selectedIds.value }, {
+      onSuccess: () => {
+        console.log('Удалены каналы:', selectedIds.value);
+        selectedIds.value = [];
+      }
+    });
+  }
+};
 
 // Фильтрация
 const filteredChannels = computed(() => {
@@ -142,9 +178,10 @@ const filteredChannels = computed(() => {
   const query = search.value.toLowerCase();
 
   return props.channels.filter(channel =>
-    channel.name.toLowerCase().includes(query) ||
-    channel.title.toLowerCase().includes(query) ||
-    channel.link.toLowerCase().includes(query)
+    
+    channel.name?.toLowerCase().includes(query) ||
+    channel.title?.toLowerCase().includes(query) ||
+    channel.link?.toLowerCase().includes(query)
   );
 });
 

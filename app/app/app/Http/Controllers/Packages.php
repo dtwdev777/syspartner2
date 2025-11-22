@@ -109,4 +109,8 @@ public function destroy(Package $package)
 
     return redirect()->route('packages.index')->with('success', 'Пакет удалён');
 }
+
+
 }
+
+

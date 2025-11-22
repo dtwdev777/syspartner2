@@ -5,8 +5,8 @@ import { router, useForm } from '@inertiajs/vue3';
  // ------------------------------------
 // 1. Состояние формы
 // ------------------------------------
-
-const BASE_URL = ''
+const domain = "http://"+window.location.hostname+"/playlist";
+const BASE_URL = domain;
 // ------------------------------------
 // 1. Состояние формы
 // ------------------------------------
@@ -156,7 +156,8 @@ const submitForm = () => {
       onSuccess: () => {
           formSubmitted.value = true;
           console.log('Форма успешно отправлена!');
-          // Дополнительно: можно сбросить форму: form.reset();
+          router.get('/')
+          // form.reset();
       },
       onError: (errors) => {
           console.error('Ошибка при отправке формы:', errors);

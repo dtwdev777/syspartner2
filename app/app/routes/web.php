@@ -47,6 +47,7 @@ Route::delete('/channel/{channel}', [Channels::class, 'destroy'])->name('channel
 Route::get('/countries',[Channels::class ,'country_add'])->name('countries.index');
 Route::post('/countries',[Channels::class ,'country_save'])->name('countries.store');
 Route::delete('/channel-country/{channel}/{country}', [Channels::class, 'detach']);
+Route::post('/package/all',[Channels::class ,'all_delete'])->name('package.all');
 //Packages
 Route::get('/packages',[Packages::class ,'index'])->name('packages.index');
 Route::get('/package-new',[Packages::class ,'create'])->name('package.new');
@@ -55,13 +56,14 @@ Route::put('/package/{package}/update',[Packages::class ,'update'])->name('packa
 Route::post('/package',[Packages::class ,'store'])->name('package.store');
 Route::delete('/packages/{package}',[Packages::class ,'destroy'])->name('package.delete');
 
+
 // LinkPackage
 Route::get('/client-package/{client}',[ControllerClient::class,'client_package'])->name('client.package');
 Route::post('/client-save/{client}',[ControllerClient::class,'client_save'])->name('client.save');
 
 });
 
-
+Route::get('/playlist',[ControllerClient::class,'playlist'])->name('client.playlist');
 
 
 Route::get('/admin', function(){

@@ -86,6 +86,16 @@
     </v-card-title>
 
     <v-card-text>
+       <v-text-field
+        v-model="search"
+        append-inner-icon="mdi-magnify"
+        label="Поиск"
+        single-line
+        hide-details
+        variant="outlined"
+        density="compact"
+        class="mb-3 search-bg"
+      ></v-text-field>
       <v-data-table
         :headers="headers"
         :items="countries_list"
@@ -93,6 +103,7 @@
         density="compact"
         hover
         class="elevation-1"
+         :search="search"
        
       >
         <template #item.countries="{ item }">
@@ -168,9 +179,9 @@ const flashMessage = ref(props.flash.success);
 
 const headers = [
   { title: 'ID', key: 'id' },
-  { title: 'Название', key: 'name' },
+  { title: 'Название', key: 'title' },
 
-  { title: 'Страны', key: 'countries', sortable: false },
+  { title: 'Страны', key: 'countries' },
 ];
 
 const density = ref('compact');
@@ -182,6 +193,7 @@ const form = useForm({
     channels : [] as number[]
   
 });
+const search = ref('')
 
 // --- Computed для стран ---
 const transformedCountries = computed<Country[]>(() => {
