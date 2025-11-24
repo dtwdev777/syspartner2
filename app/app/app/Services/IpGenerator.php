@@ -83,13 +83,13 @@ public static function create_playlist($categories, $package="", $type="m3u8", $
                            //m3u8
                             if($file_types[0] == $type){
                             $content .="#EXTINF:-1 tvg-id=\"{$chanel->dataid}\"  tvg-name=\"$chanel_title\", group-title=\"$country\"  , {$chanel_title}\n" ;
-                            $content .= "$flussonic_url/{$chanel->name}/video.m3u8?$token\n";
+                            $content .= "{$chanel->link}/{$chanel->name}/video.m3u8?$token\n";
                             }
 
                             // m3u
                             elseif($file_types[1] == $type){
                                 $content .="#EXTINF:-1 tvg-id=\"{$chanel->dataid}\"  tvg-name=\"$chanel_title\",  {$chanel_title}\n" ;
-                                $content .= "$flussonic_url/{$chanel->name}/mpegts?$token\n";
+                                $content .= "{$chanel->link}/{$chanel->name}/mpegts?$token\n";
                                }
 
                                //ottpplayer
@@ -133,7 +133,7 @@ public static function create_playlist($categories, $package="", $type="m3u8", $
                             }
                         } 
             
-       //  dd($content);
+        dd($content);
       return $content;
      
     }
