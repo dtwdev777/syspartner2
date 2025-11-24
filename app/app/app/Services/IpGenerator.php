@@ -133,7 +133,7 @@ public static function create_playlist($categories, $package="", $type="m3u8", $
                             }
                         } 
             
-        dd($content);
+      //  dd($content);
       return $content;
      
     }
