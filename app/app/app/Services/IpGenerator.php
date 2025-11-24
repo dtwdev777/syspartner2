@@ -79,7 +79,7 @@ public static function create_playlist($categories, $package="", $type="m3u8", $
                            $token = "token=".$token_u;
                          //  add_token($token_hash,$token_user);
                           
-                           $chanel_title = $chanel->title ;
+                           $chanel_title = str_replace('"', '', $chanel->title) ;
                            //m3u8
                             if($file_types[0] == $type){
                             $content .="#EXTINF:-1 tvg-id=\"{$chanel->dataid}\"  tvg-name=\"$chanel_title\", group-title=\"$country\"  , {$chanel_title}\n" ;
@@ -133,8 +133,9 @@ public static function create_playlist($categories, $package="", $type="m3u8", $
                             }
                         } 
             
-        
+       //  dd($content);
       return $content;
+     
     }
 
     catch(\Exception $err){

@@ -29,7 +29,7 @@
                 <v-autocomplete
                     v-model="form.channels"
                     :items="transformedChannels"
-                    item-title="name"
+                    item-title="title"
                     item-value="id"
                     label="Выберите Каналы "
                     multiple
@@ -96,31 +96,53 @@
         density="compact"
         class="mb-3 search-bg"
       ></v-text-field>
+
+      <v-dialog v-model="showModal" max-width="600px">
+  <v-card>
+    <v-card-title>
+      Страна для удаления: {{ selectedItem?.title || '...' }}
+    </v-card-title>
+    <v-card-text>
+      <div class="flex flex-wrap gap-2">
+        <v-chip
+          v-for="country in selectedItem?.countries || []"
+          :key="country.id"
+          color="primary"
+          size="small"
+          variant="outlined"
+          closable
+          @click:close="detachCountry(selectedItem.id, country.id)"
+        >
+          {{ country.name }}
+        </v-chip>
+      </div>
+    </v-card-text>
+    <v-card-actions>
+      <v-spacer />
+      <v-btn text @click="showModal = false">Закрыть</v-btn>
+    </v-card-actions>
+  </v-card>
+</v-dialog>
+
       <v-data-table
         :headers="headers"
         :items="countries_list"
+        v-model:selected="selectedItem"
         item-value="id"
         density="compact"
         hover
         class="elevation-1"
          :search="search"
+          @click:row="openModal"
+        
        
       >
-        <template #item.countries="{ item }">
-          <div class="flex flex-wrap gap-2">
-            <v-chip
-              v-for="country in item.countries"
-              :key="country.id"
-              color="primary"
-              size="small"
-              variant="outlined"
-               closable
-              @click:close="detachCountry(item.id, country.id)"
-            >
-              {{ country.name }}
-            </v-chip>
-          </div>
-        </template>
+       <template #item.countries="{ item }">
+  <v-btn  @click="openModal(item)">
+    <v-icon size="small">mdi-delete</v-icon>
+  </v-btn>
+</template>
+     
       </v-data-table>
     </v-card-text>
   </v-card>
@@ -146,7 +168,7 @@ interface Country {
 }
 interface Channel {
     id: number;
-    name: string;
+    title: string;
 }
 
 interface Channel_List {
@@ -182,9 +204,24 @@ const headers = [
   { title: 'Название', key: 'title' },
 
   { title: 'Страны', key: 'countries' },
+  { title: 'link', key: 'link' },
+  
 ];
 
 const density = ref('compact');
+
+//modal
+const showModal = ref(false);
+const selectedItem = ref(null);
+
+const openModal = (event,{item} ) => {
+  if (item) {
+      selectedItem.value = item;
+  }
+ 
+  showModal.value = true;
+};
+
 // --- useForm ---
 const form = useForm({
    
@@ -199,9 +236,9 @@ const search = ref('')
 const transformedCountries = computed<Country[]>(() => {
     const data = props.countries;
     if (data && typeof data === 'object' && !Array.isArray(data)) {
-        return Object.entries(data).map(([id, name]) => ({
+        return Object.entries(data).map(([id, title]) => ({
             id: Number(id),
-            name: String(name),
+            title: String(title)
         }));
     }
     return Array.isArray(data) ? data : [];
@@ -209,10 +246,12 @@ const transformedCountries = computed<Country[]>(() => {
 
 const transformedChannels = computed<Country[]>(() => {
     const data = props.channels;
+  
     if (data && typeof data === 'object' && !Array.isArray(data)) {
         return Object.entries(data).map(([id, name]) => ({
+          
             id: Number(id),
-            name: String(name),
+            name: String(name)
         }));
     }
     return Array.isArray(data) ? data : [];
@@ -258,5 +297,8 @@ const detachCountry = (channelId: number, countryId: number) => {
 <style scoped>
 .max-w-xl {
     max-width: 36rem;
+}
+.v-data-table .v-data-table__tr {
+  cursor: pointer;
 }
 </style>
