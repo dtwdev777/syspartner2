@@ -176,10 +176,23 @@ const updateUrl = (link) => {
 };
 
 const copyToClipboard = (text) => {
-  navigator.clipboard.writeText(text).then(() => {
-    console.log('Скопировано:', text);
-    // можно добавить snackbar/toast для подтверждения
-  });
+  if (navigator.clipboard) {
+    try {
+      navigator.clipboard.writeText(text);
+      console.log('Скопировано:', text);
+    } catch (err) {
+      console.error('Ошибка копирования:', err);
+    }
+  } else {
+    // fallback для http
+    const input = document.createElement('input');
+    input.value = text;
+    document.body.appendChild(input);
+    input.select();
+    document.execCommand('copy');
+    document.body.removeChild(input);
+    console.log('Скопировано через fallback:', text);
+  }
 };
 
 onMounted(() => {
