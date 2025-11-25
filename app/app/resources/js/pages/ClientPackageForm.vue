@@ -52,7 +52,51 @@
         </v-card-actions>
       </form>
     </v-card-text>
+</v-card>
+    <v-card class="max-w-xl mx-auto mt-10" elevation="6" rounded="lg">
+    <v-card-title class="text-h5 font-weight-bold py-4 text-black">
+      <div class="text-center w-full">Ссылки для скачивание</div>
+    </v-card-title>
+   
+    <v-card-text class="py-6 px-4">
+     <div
+    v-for="(link, index) in localLinks"
+    :key="index"
+    class="d-flex align-center mb-4"
+  >
+    <v-text-field
+      v-model="link.url"
+      label="Ссылка (URL)"
+      variant="outlined"
+      prepend-inner-icon="mdi-link"
+      hide-details
+      class="mr-2"
+      density="compact"
+     
+    append-inner-icon="mdi-content-copy"
+    @click:append-inner="copyToClipboard(link.url)"
+   
+    />
 
+    <v-checkbox v-if="link.isVideo"
+      v-model="link.isVideo"
+      label="m3u8"
+      color="primary"
+      @change="updateUrl(link)"
+    />
+     <v-checkbox v-else="link.isVideo"
+      v-model="link.isVideo"
+      label="m3u"
+      color="primary"
+      @change="updateUrl(link)"
+    />
+
+       
+    </div>
+
+       
+    </v-card-text>
+ </v-card>
     <!-- Snackbar для успеха -->
     <v-snackbar
       v-model="successAlert"
@@ -62,16 +106,21 @@
     >
       ✅ Клиент успешно привязан к пакету
     </v-snackbar>
-  </v-card>
+ 
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref ,watch ,onMounted } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 
 interface Client {
   id: number;
   name: string;
+}
+
+interface Link {
+  id: number;
+  url :string;
 }
 
 interface Package {
@@ -82,6 +131,7 @@ interface Package {
 const props = defineProps<{
   client: Client;
   packages: Package[];
+  links: Link[]
 }>();
 
 // --- useForm ---
@@ -107,6 +157,36 @@ const submitForm = () => {
     }
   });
 };
+
+
+// преобразуем строки в объекты с флагом
+const localLinks = ref(props.links.map(url => ({
+  url,
+  isVideo: true // по умолчанию считаем видео
+})));
+
+// обновляем ссылку при смене флага
+const updateUrl = (link) => {
+  // удаляем старый параметр, если есть
+  link.url = link.url.replace(/([&?])type=(m3u8|m3u)/, '');
+
+  // добавляем новый параметр
+  const suffix = link.isVideo ? 'm3u8' : 'm3u';
+  link.url += (link.url.includes('?') ? '&' : '?') + `type=${suffix}`;
+};
+
+const copyToClipboard = (text) => {
+  navigator.clipboard.writeText(text).then(() => {
+    console.log('Скопировано:', text);
+    // можно добавить snackbar/toast для подтверждения
+  });
+};
+
+onMounted(() => {
+  localLinks.value.forEach(link => updateUrl(link));
+});
+
+
 
 const goBack = () => {
   window.history.back();

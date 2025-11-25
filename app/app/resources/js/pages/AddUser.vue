@@ -22,6 +22,8 @@ const formData = useForm({
   links: [''],     
 });
 
+
+
 const formSubmitted = ref(false);
 const useDatePicker = ref(false); // ⭐️ НОВОЕ: Переключатель режима (false = Интервал)
 
@@ -344,6 +346,7 @@ const goBack = () => {
             class="mr-2"
             density="compact"
           ></v-text-field>
+       
 
           <v-btn
             v-if="formData.links.length > 1"

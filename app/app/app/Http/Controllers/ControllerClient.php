@@ -19,7 +19,8 @@ class ControllerClient extends Controller
     public function index(){
       $clients = Client::all();
       return Inertia::render('Users',[
-        "clients" => $clients
+        "clients" => $clients,
+        
       ]);
     }
 
@@ -32,6 +33,7 @@ $client->load('links'); // Загружаем связанные ссылки
 
     // Форматируем массив ссылок для Vue (просто массив URL-строк)
     $linksArray = $client->links->pluck('url')->toArray();
+   
     
     // Подготовка данных для передачи в Inertia
     $clientData = [
@@ -173,6 +175,11 @@ public function destroy(Client $client) // Используем Route Model Bind
 
       $packages = Package::all();
 
+      $client->load('links'); // Загружаем связанные ссылки
+     // Форматируем массив ссылок для Vue (просто массив URL-строк)
+    $linksArray = $client->links->pluck('url')->toArray();
+   
+
     // Передаём клиента и список пакетов во Vue
    return inertia('ClientPackageForm', [
         'client' => [
@@ -181,6 +188,7 @@ public function destroy(Client $client) // Используем Route Model Bind
             'package_id' => $client->packages()->first()?->id, // 👈 текущий пакет
         ],
         'packages' => $packages,
+        'links' => $linksArray,
     ]);
 }
 
@@ -202,6 +210,8 @@ public function client_save(Request $request, Client $client)
 public function playlist(Request $request , IpGenerator $ipGenerator){
   try{
     $hash = $request->input('token');
+    $type = $request->input('type');
+   
     $client = Client::where('token', $hash)->firstOrFail();
 
 // Получаем первый пакет клиента (если нужен только один)
@@ -224,7 +234,7 @@ foreach ($package->countries as $country) {
 
             
               if(!$playlist->isEmpty()){
-                $data = $ipGenerator::create_playlist($playlist ,"", "m3u8", $hash);
+                $data = $ipGenerator::create_playlist($playlist ,"", $type, $hash);
                 // header('Content-Type: text/plain');
                 //  header  ontent-Disposition: attachment; filename="'.$download.'"');
                

@@ -123,6 +123,19 @@ const viewClient = (client) => {
   router.get(`/client-package/${client.id}`);
 };
 
+const isVideo = ref({ type: Boolean, default: false });
+const fileExtension = computed(() => (isVideo.value ? 'm3u8' : 'm3u'));
+
+const showModal = ref(false);
+const selectedItem = ref(null);
+
+const openModal = (event,{item} ) => {
+  if (item) {
+      selectedItem.value = item;
+  }
+ 
+  showModal.value = true;
+};
 </script>
 
 <template>
@@ -178,6 +191,9 @@ const viewClient = (client) => {
       :density="density"
       :search="search"
     >
+  
+    
+
       <template v-slot:item.is_active="{ item }">
         <v-chip
           :color="item.is_active ? 'success' : 'error'"

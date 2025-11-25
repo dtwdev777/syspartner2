@@ -17,7 +17,7 @@ public static function create_playlist($categories, $package="", $type="m3u8", $
           $sub_domen  = env("SERVERV3");
         // $host  = parse_url($url_setting ,PHP_URL_HOST);
         // $port  = parse_url($url_setting,PHP_URL_PORT);
-        $flussonic_url  = "http://live2.streamer.ac";
+        $flussonic_url  = "";
         $iconUrl = "$name_host/wp-content/uploads/icons/";
        
 
@@ -133,7 +133,7 @@ public static function create_playlist($categories, $package="", $type="m3u8", $
                             }
                         } 
             
-      //  dd($content);
+      // dd($content);
       return $content;
      
     }
