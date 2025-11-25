@@ -147,7 +147,10 @@ public function edit(Channel $channel){
     public function country_add(){
         $countries = Country::all(['id','name']);
         $channels = Channel::all(['id' ,'title']);
-         $countries_list = Channel::with('countries')->get();
+         $countries_list = Channel::with('countries')
+    ->whereHas('countries')
+    ->get();
+       //  dd($countries_list);
         
         return Inertia::render('CountryChannels', [
         'channels' => $channels,

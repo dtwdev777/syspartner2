@@ -133,11 +133,12 @@
         hover
         class="elevation-1"
          :search="search"
-          @click:row="openModal"
+        
         
        
       >
-       <template #item.countries="{ item }">
+       <template  v-slot:item.countries="{ item }">
+       
   <v-btn  @click="openModal(item)">
     <v-icon size="small">mdi-delete</v-icon>
   </v-btn>
@@ -214,12 +215,12 @@ const density = ref('compact');
 const showModal = ref(false);
 const selectedItem = ref(null);
 
-const openModal = (event,{item} ) => {
-  if (item) {
-      selectedItem.value = item;
+const openModal = (item ) => {
+  console.log(item)
+  if (item !== null && item !== undefined) {
+    selectedItem.value = item;
+    showModal.value = true;
   }
- 
-  showModal.value = true;
 };
 
 // --- useForm ---
