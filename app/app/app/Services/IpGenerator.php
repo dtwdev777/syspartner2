@@ -82,13 +82,13 @@ public static function create_playlist($categories, $package="", $type="m3u8", $
                            $chanel_title = str_replace('"', '', $chanel->title) ;
                            //m3u8
                             if($file_types[0] == $type){
-                            $content .="#EXTINF:-1 tvg-id=\"{$chanel->dataid}\"  tvg-name=\"$chanel_title\", group-title=\"$country\"  , {$chanel_title}\n" ;
+                            $content .="#EXTINF:-1 , group-title=\"$country\"  , {$chanel_title}\n" ;
                             $content .= "{$chanel->link}/{$chanel->name}/video.m3u8?$token\n";
                             }
 
                             // m3u
                             elseif($file_types[1] == $type){
-                                $content .="#EXTINF:-1 tvg-id=\"{$chanel->dataid}\"  tvg-name=\"$chanel_title\",  {$chanel_title}\n" ;
+                                $content .="#EXTINF:-1,  {$chanel_title}\n" ;
                                 $content .= "{$chanel->link}/{$chanel->name}/mpegts?$token\n";
                                }
 
