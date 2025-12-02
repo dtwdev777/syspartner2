@@ -24,7 +24,21 @@
         <v-card-text class="py-6 px-4">
             <form @submit.prevent="submitForm" class="space-y-6">
                 
-               
+               <v-btn
+      color="primary"
+      size="small"
+      @click="selectAllChannels"
+    >
+      Выбрать все
+    </v-btn>
+
+    <v-btn
+      color="secondary"
+      size="small"
+      @click="clearChannels"
+    >
+      Очистить
+    </v-btn>
                   <!-- Множественный выбор стран -->
                 <v-autocomplete
                     v-model="form.channels"
@@ -214,6 +228,14 @@ const density = ref('compact');
 //modal
 const showModal = ref(false);
 const selectedItem = ref(null);
+
+  const selectAllChannels = () => {
+    form.channels = transformedChannels.value.map(c => c.id)
+  }
+
+  const clearChannels = () => {
+    form.channels = []
+  }
 
 const openModal = (item ) => {
   console.log(item)
